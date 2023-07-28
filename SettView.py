@@ -14,8 +14,6 @@ from ttkbootstrap.constants import *
 class SettView:
     def __init__(self, root):
         self.root = root
-        self.root.title("Easy Settelment")
-
         self.fixedSize(self.root) #Fixed size
         self.disableResizing(self.root) #Disable resizing
 
