@@ -9,7 +9,7 @@ class Main:
 
 keyboardController = Controller()
 root = tk.Tk()
-root.title("Beautify XML/JSON")
+root.title("Easy Settlement")
 app = sv.SettView(root)
 root.mainloop()
 #op = Op.Operation()
