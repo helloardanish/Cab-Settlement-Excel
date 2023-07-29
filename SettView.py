@@ -14,6 +14,8 @@ from ttkbootstrap.constants import *
 class SettView:
     def __init__(self, root):
         self.root = root
+        self.root.title("Easy Settelment")
+
         self.fixedSize(self.root) #Fixed size
         self.disableResizing(self.root) #Disable resizing
 
@@ -159,7 +161,9 @@ class SettView:
         current_date = start_date
         morning = True
         while current_date <= end_date:
-            proceedWithDate = current_date.strftime('%Y-%m-%d')
+            #proceedWithDate = current_date.strftime('%Y-%m-%d')
+            proceedWithDate = current_date.strftime('%d/%b/%y')
+            
             #print(current_date.strftime('%Y-%m-%d'))
             #if window destroy only then call
             for i in range(2):
@@ -181,18 +185,17 @@ class SettView:
 
         for i in range(len(excelDataLst)):
             dataOfRow = []
-            print(excelDataLst[i].date)
             dataOfRow.append(excelDataLst[i].date)
-            print(excelDataLst[i].booked)
-            dataOfRow.append(excelDataLst[i].booked)
-            print(excelDataLst[i].price)
-            dataOfRow.append(excelDataLst[i].price)
-            print(excelDataLst[i].hotelOffice)
             dataOfRow.append(excelDataLst[i].hotelOffice)
+            dataOfRow.append(excelDataLst[i].amount)
+            dataOfRow.append(excelDataLst[i].exchRate)
+            dataOfRow.append(excelDataLst[i].amountFC)
+            dataOfRow.append(excelDataLst[i].remarks)
+            dataOfRow.append(excelDataLst[i].booked)
 
             dataofAllRow.append(dataOfRow)
 
-        #self.saveExcel(dataofAllRow)
+        self.saveExcel(dataofAllRow)
         
 
         
@@ -202,7 +205,7 @@ class SettView:
         sheet = workbook.active
 
         # Add headers to the sheet
-        sheet.append(['Date',"Hotel or Office" ,'Booked', 'Price'])
+        sheet.append(['Date','Paticulars(From-To)' , 'Amount', 'Exch. Rate', 'Amount(FC)','Remarks(with bill/without bill)', 'Booked'])
 
         # Add sample data rows
         #data = [
@@ -234,7 +237,7 @@ class SettView:
         #book_ride_window.attributes('-topmost', True)
 
         morEven = "Morning" if morning else "Evening"
-        hotelOrOffice = "Hotel to Office" if morning else "Office to Hotel"
+        hotelOrOffice = "Taxi(Hotel to Office)" if morning else "Taxi(Office to Hotel)"
         # Add a label to the new window
         book_ride_check_label = tk.Label(book_ride_window, text="Booked ride on : "+bookDate+"\n"+morEven,)
         book_ride_check_label.grid(row=0, column=0, padx=20,pady=20)
@@ -244,11 +247,16 @@ class SettView:
         # Function to handle the Yes button
         def on_yes():
             # Ask the user to enter their name
-            user_name = simpledialog.askstring("Cab Ride Yes", "Please enter amount")
-            if user_name:
-                message = f"You chose Yes, {user_name}!"
-                #self.finalCabDetailsLst.append(int(user_name))
-                row = ExcelData(bookDate,"YES",int(user_name),hotelOrOffice)
+            entered_amount = simpledialog.askstring("Cab Ride Yes", "Please enter amount")
+            if entered_amount:
+                message = f"You chose Yes, {entered_amount}!"
+                amount_decimal = "{:.2f}".format(float(entered_amount))
+                #self.finalCabDetailsLst.append(int(entered_amount))
+                
+                row = ExcelData(bookDate, hotelOrOffice, amount_decimal, "{:.2f}".format(1), amount_decimal, "Bolt","YES")
+
+
+                #ExcelData('Date','Paticulars(From-To)', 'Amount', 'Exch. Rate', 'Amount(FC)','Remarks(with bill/without bill)', 'Booked')
                 self.finalCabDetailsLst.append(row)
                 #print(row.date)
                 #messagebox.showinfo("Result", message)
@@ -264,7 +272,9 @@ class SettView:
         def on_no():
             msg="You choose no"
             #self.finalCabDetailsLst.append(0)
-            row = ExcelData(bookDate,"NO",0,hotelOrOffice)
+            #row = ExcelData(bookDate,"NO",0,hotelOrOffice)
+
+            row = ExcelData(bookDate, hotelOrOffice, "{:.2f}".format(0), "{:.2f}".format(1), "{:.2f}".format(0), "","NO")
             self.finalCabDetailsLst.append(row)
             #messagebox.showinfo("Result", "You chose No!")
             book_ride_window.destroy()
@@ -273,12 +283,15 @@ class SettView:
         
 
         # Align the button to the left
-        yes_button = tk.Button(book_ride_window, text="Yes", command=on_yes)
+        yes_button = tk.Button(book_ride_window, text="Yes", command=on_yes, fg="white", bg="blue")
         yes_button.grid(row=1, column=0, padx=20, pady=20, sticky="w")
 
         # Align the button to the right
-        no_button = tk.Button(book_ride_window, text="No", command=on_no)
+        no_button = tk.Button(book_ride_window, text="No", command=on_no, fg="white", bg="blue")
         no_button.grid(row=1, column=1, padx=20, pady=20, sticky="e")
+
+        # Create a custom background color (blue in this example)
+        button_bg_color = "#0074D9"
 
         # Add Yes and No buttons to the new window
         #yes_button = tk.Button(book_ride_window, text="Yes", command=on_yes)
