@@ -180,20 +180,20 @@ class SettView:
     
 
     def generate_excel(self, excelDataLst):
-
         dataofAllRow = []
 
         for i in range(len(excelDataLst)):
             dataOfRow = []
-            dataOfRow.append(excelDataLst[i].date)
-            dataOfRow.append(excelDataLst[i].hotelOffice)
-            dataOfRow.append(excelDataLst[i].amount)
-            dataOfRow.append(excelDataLst[i].exchRate)
-            dataOfRow.append(excelDataLst[i].amountFC)
-            dataOfRow.append(excelDataLst[i].remarks)
-            dataOfRow.append(excelDataLst[i].booked)
-
-            dataofAllRow.append(dataOfRow)
+            if excelDataLst[i].booked=="YES":
+                dataOfRow.append(excelDataLst[i].date)
+                dataOfRow.append(excelDataLst[i].hotelOffice)
+                dataOfRow.append(excelDataLst[i].amount)
+                dataOfRow.append(excelDataLst[i].exchRate)
+                dataOfRow.append(excelDataLst[i].amountFC)
+                dataOfRow.append(excelDataLst[i].remarks)
+                #dataOfRow.append(excelDataLst[i].booked)
+                
+                dataofAllRow.append(dataOfRow)
 
         self.saveExcel(dataofAllRow)
         
@@ -205,7 +205,8 @@ class SettView:
         sheet = workbook.active
 
         # Add headers to the sheet
-        sheet.append(['Date','Paticulars(From-To)' , 'Amount', 'Exch. Rate', 'Amount(FC)','Remarks(with bill/without bill)', 'Booked'])
+        #sheet.append(['Date','Paticulars(From-To)' , 'Amount', 'Exch. Rate', 'Amount(FC)','Remarks(with bill/without bill)', 'Booked'])
+        sheet.append(['Date','Paticulars(From-To)' , 'Amount', 'Exch. Rate', 'Amount(FC)','Remarks(with bill/without bill)'])
 
         # Add sample data rows
         #data = [
@@ -248,8 +249,11 @@ class SettView:
         def on_yes():
             # Ask the user to enter their name
             entered_amount = simpledialog.askstring("Cab Ride Yes", "Please enter amount")
+            #entered_amount = simpledialog.askstring("Cab Ride Yes", "Please enter amount",buttonnames=("Bolt", "Uber"))
+            
             if entered_amount:
-                message = f"You chose Yes, {entered_amount}!"
+                msg = f"You chose Yes, {entered_amount}!"
+                print(msg)
                 amount_decimal = "{:.2f}".format(float(entered_amount))
                 #self.finalCabDetailsLst.append(int(entered_amount))
                 
@@ -261,11 +265,14 @@ class SettView:
                 #print(row.date)
                 #messagebox.showinfo("Result", message)
             else:
-                msg="You choose yes"
+                msg= f"You choose cancel,{entered_amount}"
+                print(msg)
+                #amount_decimal = "{:.2f}".format(float(entered_amount))
                 #self.finalCabDetailsLst.append(0)
                 #messagebox.showinfo("Result", "You chose Yes!")
-                row = ExcelData(bookDate,"NO",0,hotelOrOffice)
-                self.finalCabDetailsLst.append(row)
+                #row = ExcelData(bookDate,"NO",0,hotelOrOffice)
+                #row = ExcelData(bookDate, hotelOrOffice, amount_decimal, "{:.2f}".format(1), amount_decimal, "Uber","YES")
+                #self.finalCabDetailsLst.append(row)
             book_ride_window.destroy()
 
         # Function to handle the No button
@@ -291,7 +298,7 @@ class SettView:
         no_button.grid(row=1, column=1, padx=20, pady=20, sticky="e")
 
         # Create a custom background color (blue in this example)
-        button_bg_color = "#0074D9"
+        #button_bg_color = "#0074D9"
 
         # Add Yes and No buttons to the new window
         #yes_button = tk.Button(book_ride_window, text="Yes", command=on_yes)
@@ -325,7 +332,6 @@ class SettView:
         book_ride_window.tk.call('ttk::style', 'theme', 'use', 'dark')
         new_style = ttk.Style(book_ride_window)
         new_style.configure('Red.TButton', foreground='white', background='red')
-
 
 
 
